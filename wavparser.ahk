@@ -20,7 +20,7 @@ ft.="ID:`t" wavHeader.ID "`n"
 hFile.Pos += 4	; skip string 'fmt '
 hFile.RawRead(_,4)
 fmtHeader.chunksize:=NumGet(_,0,"Int")
-hFile.RawRead(fmtHeader_raw,fmtHeader.chunksize-4)
+hFile.RawRead(fmtHeader_raw,fmtHeader.chunksize)
 fmtHeader.audiofmt:=NumGet(fmtHeader_raw, 0,"Short")
 fmtHeader.numch:=NumGet(fmtHeader_raw, 2,"Short")
 fmtHeader.samprate:=NumGet(fmtHeader_raw, 4,"Int")
@@ -38,9 +38,8 @@ ft.="BLKALIGN:`t" fmtHeader.blkalign "`n"
 ft.="BITSPERSAMP:`t" fmtHeader.bitspersamp "`n"
 
 hFile.Pos+=4	; skip string 'data'
-hFile.RawRead(dataHeader_raw,8)
-SetFormat, Integer, HEX
-dataHeader.chunksize:=NumGet(dataHeader_raw, 4,"Int")
+hFile.RawRead(dataHeader_raw,4)
+dataHeader.chunksize:=NumGet(dataHeader_raw, 0,"Int")
 ft.="`nDATA HEAD:" "`n"
 ft.="CHUNKSIZE:`t" dataHeader.chunksize "`n"
 MsgBox, % ft
