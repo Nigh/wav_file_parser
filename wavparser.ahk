@@ -37,6 +37,12 @@ ft.="BYTERATE:`t" fmtHeader.byterate "`n"
 ft.="BLKALIGN:`t" fmtHeader.blkalign "`n"
 ft.="BITSPERSAMP:`t" fmtHeader.bitspersamp "`n"
 
+if(fmtHeader.bitspersamp>=24){
+	type:="Float"
+}else{
+	type:="Short"
+}
+
 hFile.Pos+=4	; skip string 'data'
 hFile.RawRead(dataHeader_raw,4)
 dataHeader.chunksize:=NumGet(dataHeader_raw, 0,"Int")
@@ -51,8 +57,12 @@ hFile.RawRead(wav_data,dataHeader.chunksize)
 output:=""
 Loop, % dataHeader.chunksize/fmtHeader.blkalign
 {
-	output.=NumGet(wav_data, (A_Index-1)*fmtHeader.blkalign,"Float") "`n"
-	; MsgBox,
+	num:=NumGet(wav_data, (A_Index-1)*fmtHeader.blkalign,type)
+	if(type="Short")
+	{
+		num/=32767
+	}
+	output.=num "`n"
 }
 FileDelete, wavlog.log
 FileAppend, % output, wavlog.log
